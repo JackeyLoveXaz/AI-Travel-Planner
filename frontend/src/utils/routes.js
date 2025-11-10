@@ -1,0 +1,44 @@
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
+import App from '../App';
+import HomePage from '../pages/HomePage';
+import DashboardPage from '../pages/DashboardPage';
+import ItineraryPage from '../pages/ItineraryPage';
+import BudgetPage from '../pages/BudgetPage';
+import SettingsPage from '../pages/SettingsPage';
+import ConnectionTestPage from '../pages/ConnectionTestPage';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        path: '',
+        element: <HomePage />
+      },
+      {
+        path: 'dashboard',
+        element: <DashboardPage />
+      },
+      {
+        path: 'itinerary/:id?',
+        element: <ItineraryPage />
+      },
+      {
+        path: 'budget/:itineraryId?',
+        element: <BudgetPage />
+      },
+      {
+        path: 'settings',
+        element: <SettingsPage />
+      },
+      {
+        path: 'connection-test',
+        element: <ConnectionTestPage />
+      }
+    ]
+  }
+]);
+
+export default router;

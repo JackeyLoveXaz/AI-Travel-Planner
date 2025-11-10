@@ -1,0 +1,183 @@
+.connection-test-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.connection-test-page h1 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.connection-test-page .description {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.test-controls {
+  margin-bottom: 2rem;
+}
+
+.test-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.test-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.test-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.last-test-time {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.test-results {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.summary {
+  margin-bottom: 2rem;
+}
+
+.summary h2 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.overall-status {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.overall-status.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.overall-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.test-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .test-details {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.test-section {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+}
+
+.test-section h3 {
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  align-items: center;
+}
+
+.status-label {
+  color: #666;
+}
+
+.status-value {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-value.success {
+  color: #28a745;
+}
+
+.status-value.error {
+  color: #dc3545;
+}
+
+.status-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+}
+
+.status-icon.success {
+  background-color: #28a745;
+}
+
+.status-icon.error {
+  background-color: #dc3545;
+}
+
+.error-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.help-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #e9ecef;
+  border-radius: 6px;
+}
+
+.help-section h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.help-section ul {
+  color: #555;
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.help-section li {
+  margin-bottom: 0.5rem;
+}
