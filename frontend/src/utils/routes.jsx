@@ -2,7 +2,6 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
 import HomePage from '../pages/HomePage';
-import DashboardPage from '../pages/DashboardPage';
 import ItineraryPage from '../pages/ItineraryPage';
 import BudgetPage from '../pages/BudgetPage';
 import SettingsPage from '../pages/SettingsPage';
@@ -16,10 +15,6 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <HomePage />
-      },
-      {
-        path: 'dashboard',
-        element: <DashboardPage />
       },
       {
         path: 'itinerary/:id?',

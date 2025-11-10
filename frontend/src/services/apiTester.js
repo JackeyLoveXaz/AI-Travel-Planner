@@ -3,7 +3,7 @@
  * 用于测试与后端API的连接状态
  */
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 /**
  * 测试API连接的基础函数
