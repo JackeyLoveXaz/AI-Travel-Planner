@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiConfig';
+import { API_BASE_URL, getHeadersWithApiKey } from './apiConfig';
 
 /**
  * 预算服务
@@ -10,9 +10,7 @@ export const createBudget = async (itineraryId, destination, totalBudget, catego
   try {
     const response = await fetch(`${API_BASE_URL}/budgets`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: getHeadersWithApiKey(),
       body: JSON.stringify({
         itineraryId,
         destination,
@@ -37,14 +35,18 @@ export const createBudget = async (itineraryId, destination, totalBudget, catego
 // 获取预算
 export const getBudgetByItineraryId = async (itineraryId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/budgets/${itineraryId}`);
+    const response = await fetch(`${API_BASE_URL}/budgets/${itineraryId}`, {
+      headers: getHeadersWithApiKey()
+    });
     
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || '获取预算失败');
     }
 
-    return await response.json();
+    const data = await response.json();
+    // 处理后端返回的{message, data}结构
+    return data.data || data;
   } catch (error) {
     console.error('获取预算错误:', error);
     throw error;
@@ -56,9 +58,7 @@ export const updateBudget = async (itineraryId, updates) => {
   try {
     const response = await fetch(`${API_BASE_URL}/budgets/${itineraryId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: getHeadersWithApiKey(),
       body: JSON.stringify(updates)
     });
 
@@ -80,9 +80,7 @@ export const updateBudgetCategory = async (categoryId, updates) => {
   try {
     const response = await fetch(`${API_BASE_URL}/budgets/category/${categoryId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: getHeadersWithApiKey(),
       body: JSON.stringify(updates)
     });
 

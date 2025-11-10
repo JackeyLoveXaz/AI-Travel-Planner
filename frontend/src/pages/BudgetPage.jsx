@@ -144,15 +144,15 @@ const BudgetPage = () => {
         <div className="budget-summary">
           <div className="summary-item">
             <span className="label">总预算</span>
-            <span className="value">¥{budget.totalBudget.toLocaleString()}</span>
+            <span className="value">¥{(budget.totalBudget || 0).toLocaleString()}</span>
           </div>
           <div className="summary-item">
             <span className="label">已花费</span>
-            <span className="value spent">¥{budget.spent.toLocaleString()}</span>
+            <span className="value spent">¥{(budget.spent || 0).toLocaleString()}</span>
           </div>
           <div className="summary-item">
             <span className="label">剩余</span>
-            <span className="value remaining">¥{budget.remaining.toLocaleString()}</span>
+            <span className="value remaining">¥{(budget.remaining || 0).toLocaleString()}</span>
           </div>
         </div>
 
@@ -188,7 +188,7 @@ const BudgetPage = () => {
               return (
                 <tr key={category._id}>
                   <td>{category.name}</td>
-                  <td>¥{category.budget.toLocaleString()}</td>
+                  <td>¥{(category.budget || 0).toLocaleString()}</td>
                   <td>
                     {editingCategory === category._id ? (
                       <div className="edit-controls">
@@ -218,11 +218,11 @@ const BudgetPage = () => {
                         </button>
                       </div>
                     ) : (
-                      <span>¥{category.actual.toLocaleString()}</span>
+                      <span>¥{(category.actual || 0).toLocaleString()}</span>
                     )}
                   </td>
                   <td className={remaining < 0 ? 'over-budget' : ''}>
-                    <span>¥{remaining.toLocaleString()}</span>
+                    <span>¥{(remaining || 0).toLocaleString()}</span>
                   </td>
                   <td className={percentage > 100 ? 'over-budget' : ''}>{percentage}%</td>
                   <td>

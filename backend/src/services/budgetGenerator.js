@@ -1,12 +1,13 @@
-const openai = require('../config/openai');
+const axios = require('axios');
 
 /**
- * 使用OpenAI生成预算建议
+ * 使用通义千问API生成预算建议
  * @param {string} destination - 目的地
  * @param {number} totalBudget - 总预算
+ * @param {string} apiKey - 用户提供的API key（通义千问）
  * @returns {Promise<Array>} 生成的预算类别数组
  */
-const generateBudget = async (destination, totalBudget) => {
+const generateBudget = async (destination, totalBudget, apiKey = '') => {
   try {
     // 构建提示信息
     const prompt = `请为以下旅行目的地生成合理的预算分配建议：
@@ -23,19 +24,64 @@ const generateBudget = async (destination, totalBudget) => {
   {"name": "其他", "estimated": 金额, "actual": 0}
 ]
 
-请根据${destination}的消费水平，合理分配各项支出，确保总和接近总预算。`;
+请根据${destination}的消费水平，合理分配各项支出，确保总和接近总预算。
 
-    // 调用OpenAI API
-    const response = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: prompt,
-      max_tokens: 500,
-      temperature: 0.7,
+请确保返回严格的JSON格式，不要包含任何额外的文本或解释。`;
+
+    // 检查用户是否提供了有效的API key
+    const isValidUserApiKey = apiKey && 
+      apiKey.trim() !== '' && 
+      apiKey !== 'sk-placeholder-key-for-development' && 
+      !apiKey.startsWith('your_');
+
+    // 调用通义千问API（使用阿里云DashScope服务）
+    const response = await axios({
+      method: 'post',
+      url: 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      data: {
+        model: 'qwen-max', // 使用通义千问的max模型
+        input: {
+          prompt: prompt
+        },
+        parameters: {
+          max_tokens: 500,
+          temperature: 0.7,
+          top_p: 0.8
+        }
+      }
     });
 
     // 解析生成的内容
-    const generatedContent = response.data.choices[0].text.trim();
-    const budgetCategories = JSON.parse(generatedContent);
+      const generatedContent = response.data.output.text.trim();
+      let budgetCategories;
+      
+      try {
+        // 提取JSON部分（移除可能的前言和后语）
+        const jsonMatch = generatedContent.match(/\[([\s\S]*?)\]/);
+        
+        if (jsonMatch) {
+          const jsonContent = jsonMatch[0];
+          budgetCategories = JSON.parse(jsonContent);
+        } else {
+          // 尝试直接解析
+          budgetCategories = JSON.parse(generatedContent);
+        }
+        
+        // 验证解析结果是否为数组
+        if (!Array.isArray(budgetCategories)) {
+          console.warn('预算解析结果不是数组，使用默认预算');
+          return generateDefaultBudget(totalBudget);
+        }
+      } catch (jsonError) {
+        console.error('预算JSON解析错误:', jsonError);
+        console.error('原始生成内容:', generatedContent);
+        // JSON解析失败时返回默认预算
+        return generateDefaultBudget(totalBudget);
+      }
 
     return budgetCategories;
   } catch (error) {

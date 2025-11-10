@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createItinerary } from '../services/itineraryService';
 import { createBudget } from '../services/budgetService';
-import { handleApiError } from '../services/apiConfig';
+import { handleApiError, hasConfiguredApiKey } from '../services/apiConfig';
+import { getTravelPlanFromAI, parseAIResult } from '../services/aiService';
 import '../styles/HomePage.css';
 
 function HomePage() {
@@ -20,7 +21,22 @@ function HomePage() {
   // 状态管理
   const [isListening, setIsListening] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [processingAI, setProcessingAI] = useState(false);
   const [error, setError] = useState('');
+  const [apiKeyConfigured, setApiKeyConfigured] = useState(true);
+  
+  // 检查API Key配置状态
+  useEffect(() => {
+    setApiKeyConfigured(hasConfiguredApiKey());
+    
+    // 监听localStorage变化
+    const handleStorageChange = () => {
+      setApiKeyConfigured(hasConfiguredApiKey());
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
   
   const navigate = useNavigate();
   const recognitionRef = useRef(null);
@@ -129,10 +145,85 @@ function HomePage() {
       setPreferences(preferencesText.join(', '));
     }
   };
+  
+  // 处理快速输入框提交给AI直接生成行程
+  const handleAIInputSubmit = async () => {
+    if (!textInput.trim()) {
+      setError('请输入旅行需求');
+      return;
+    }
+    
+    // 检查API Key配置
+    if (!apiKeyConfigured) {
+      setError('请先在设置页面配置API Key以使用AI旅行规划功能');
+      return;
+    }
+    
+    setProcessingAI(true);
+    setError('');
+    
+    try {
+      // 调用AI服务获取行程规划
+      const aiResult = await getTravelPlanFromAI(textInput.trim());
+      
+      // 解析AI结果获取关键信息
+      const parsedData = parseAIResult(aiResult);
+      
+      // 如果AI返回了足够的信息，直接创建行程
+      if (parsedData.destination && parsedData.startDate && parsedData.endDate) {
+        // 构建请求数据
+        const preferencesObj = {
+          travelers: parsedData.travelers || parseInt(travelers) || 1,
+          preferences: parsedData.preferences || preferences.split(',').map(p => p.trim()).filter(p => p),
+          ...(parsedData.budget && { budget: parseInt(parsedData.budget) })
+        };
+        
+        // 调用API创建行程
+        const itinerary = await createItinerary(
+          parsedData.destination, 
+          parsedData.startDate, 
+          parsedData.endDate, 
+          preferencesObj
+        );
+        
+        console.log('行程创建成功:', itinerary);
+        
+        // 如果提供了预算，创建预算记录
+        if (parsedData.budget) {
+          try {
+            await createBudget(
+              itinerary._id, 
+              parsedData.destination, 
+              parseInt(parsedData.budget)
+            );
+            console.log('预算创建成功');
+          } catch (budgetError) {
+            console.warn('预算创建失败，但行程已成功创建:', budgetError);
+          }
+        }
+        
+        // 导航到行程列表页面
+        navigate('/itineraries');
+      } else {
+        setError('AI未能解析出足够的行程信息，请尝试更详细的描述');
+      }
+    } catch (err) {
+      setError(handleApiError(err) || 'AI行程生成失败，请重试');
+      console.error('AI行程生成失败:', err);
+    } finally {
+      setProcessingAI(false);
+    }
+  };
 
   // 处理表单提交
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 检查API Key配置
+    if (!apiKeyConfigured) {
+      setError('请先在设置页面配置API Key以使用AI旅行规划功能');
+      return;
+    }
     
     if (!destination || !startDate || !endDate) {
       setError('请填写目的地和日期信息');
@@ -189,6 +280,15 @@ function HomePage() {
       <h1>AI旅行规划师</h1>
       <p className="subtitle">智能规划您的完美旅程</p>
       
+      {/* API Key未配置提示 */}
+      {!apiKeyConfigured && (
+        <div className="api-key-warning">
+          <strong>提示：</strong>
+          您尚未配置API Key，部分AI功能可能无法使用。
+          <a href="/settings" className="config-link">立即配置</a>
+        </div>
+      )}
+      
       {error && <div className="error-message">{error}</div>}
       
       <div className="input-section">
@@ -199,16 +299,31 @@ function HomePage() {
             onChange={(e) => setTextInput(e.target.value)}
             placeholder="输入您的旅行需求，例如：'我想去日本，5天，预算1万元，喜欢美食和动漫，带孩子'"
             rows="3"
-            disabled={loading}
+            disabled={loading || processingAI}
           />
-          <button
-            type="button"
-            className={`voice-button ${isListening ? 'listening' : ''}`}
-            onClick={isListening ? stopVoiceRecognition : startVoiceRecognition}
-            disabled={loading}
-          >
-            {isListening ? '停止录音' : '开始录音'}
-          </button>
+          <div className="input-buttons">
+            <button
+              type="button"
+              className={`voice-button ${isListening ? 'listening' : ''}`}
+              onClick={isListening ? stopVoiceRecognition : startVoiceRecognition}
+              disabled={loading || processingAI}
+            >
+              {isListening ? '停止录音' : '开始录音'}
+            </button>
+            <button
+              type="button"
+              className="ai-button"
+              onClick={handleAIInputSubmit}
+              disabled={loading || processingAI || !textInput.trim()}
+            >
+              {processingAI ? (
+                <>
+                  <span className="loading-spinner">⟳</span>
+                  AI生成行程中...
+                </>
+              ) : 'AI生成行程'}
+            </button>
+          </div>
         </div>
       </div>
       

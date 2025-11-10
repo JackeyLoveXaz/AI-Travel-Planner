@@ -2,11 +2,12 @@
 const config = require('../../config/globalConfig');
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const { connectDB } = require('./config/db');
 const itineraryRoutes = require('./routes/itineraryRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const healthRoutes = require('./routes/healthRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 const app = express();
 const PORT = config.api.port;
@@ -27,6 +28,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/itineraries', itineraryRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 健康检查路由
 app.get('/health', (req, res) => {

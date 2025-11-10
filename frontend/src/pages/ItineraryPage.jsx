@@ -168,7 +168,7 @@ const ItineraryPage = () => {
                     <span>{formatDate(itinerary.startDate)}</span>
                     <span> - </span>
                     <span>{formatDate(itinerary.endDate)}</span>
-                    <span className="duration">{calculateDuration(itinerary.startDate, itinerary.endDate)}天</span>
+                    <span className="duration">  {calculateDuration(itinerary.startDate, itinerary.endDate)}天</span>
                   </div>
                   <div className="itinerary-actions">
                     <button 
@@ -200,7 +200,7 @@ const ItineraryPage = () => {
               <span>{formatDate(selectedItinerary.startDate)}</span>
               <span> - </span>
               <span>{formatDate(selectedItinerary.endDate)}</span>
-              <span className="duration">{calculateDuration(selectedItinerary.startDate, selectedItinerary.endDate)}天</span>
+              <span className="duration">  {calculateDuration(selectedItinerary.startDate, selectedItinerary.endDate)}天</span>
             </div>
             <button 
               className="btn-danger" 

@@ -4,19 +4,34 @@
  */
 
 // 加载环境变量
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'production' 
-    ? '.env.production' 
-    : process.env.NODE_ENV === 'testing' 
-      ? '.env.testing' 
-      : '.env'
-});
+try {
+  // 尝试从相对路径加载dotenv
+  require('dotenv').config({
+    path: process.env.NODE_ENV === 'production' 
+      ? '.env.production' 
+      : process.env.NODE_ENV === 'testing' 
+        ? '.env.testing' 
+        : '.env'
+  });
+} catch (error) {
+  // 如果在backend目录运行，使用相对路径
+  try {
+    require('dotenv').config({
+      path: require('path').resolve(__dirname, '../backend/.env')
+    });
+  } catch (innerError) {
+    console.warn('Warning: Failed to load .env file, using environment variables');
+  }
+}
+
+// 环境配置
+const env = process.env.NODE_ENV || 'development';
 
 // API配置
 const apiConfig = {
   port: process.env.PORT || 5000,
   baseUrl: process.env.API_BASE_URL || 'http://localhost:5000/api',
-  corsOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:5173').split(',').map(origin => origin.trim())
+  corsOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:5173,http://localhost:5174').split(',').map(origin => origin.trim())
 };
 
 // 数据库配置
@@ -50,10 +65,10 @@ const logConfig = {
 
 // 导出配置
 module.exports = {
+  env,
   api: apiConfig,
   db: dbConfig,
   security: securityConfig,
   openai: openaiConfig,
-  log: logConfig,
-  env: process.env.NODE_ENV || 'development'
+  log: logConfig
 };

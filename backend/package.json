@@ -6,19 +6,21 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "simple-start": "node src/index.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "axios": "^1.13.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
     "mongoose": "^7.4.1",
-    "openai": "^3.3.0",
-    "express-validator": "^7.0.1"
+    "openai": "^3.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
     "jest": "^29.6.1",
+    "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
   }
 }

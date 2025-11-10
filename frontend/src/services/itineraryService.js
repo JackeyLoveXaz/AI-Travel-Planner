@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiConfig';
+import { API_BASE_URL, getHeadersWithApiKey } from './apiConfig';
 
 /**
  * 行程服务
@@ -10,9 +10,7 @@ export const createItinerary = async (destination, startDate, endDate, preferenc
   try {
     const response = await fetch(`${API_BASE_URL}/itineraries`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: getHeadersWithApiKey(),
       body: JSON.stringify({
         destination,
         startDate,
@@ -37,14 +35,18 @@ export const createItinerary = async (destination, startDate, endDate, preferenc
 // 获取所有行程
 export const getAllItineraries = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/itineraries`);
+    const response = await fetch(`${API_BASE_URL}/itineraries`, {
+      headers: getHeadersWithApiKey()
+    });
     
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || '获取行程列表失败');
     }
 
-    return await response.json();
+    const data = await response.json();
+    // 确保返回的是行程数组，处理后端返回的 {message, data} 结构
+    return data.data || data;
   } catch (error) {
     console.error('获取行程列表错误:', error);
     throw error;
@@ -54,14 +56,18 @@ export const getAllItineraries = async () => {
 // 获取单个行程
 export const getItineraryById = async (itineraryId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/itineraries/${itineraryId}`);
+    const response = await fetch(`${API_BASE_URL}/itineraries/${itineraryId}`, {
+      headers: getHeadersWithApiKey()
+    });
     
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || '获取行程失败');
     }
 
-    return await response.json();
+    const data = await response.json();
+    // 确保返回的是行程对象，处理后端返回的 {message, data} 结构
+    return data.data || data;
   } catch (error) {
     console.error('获取行程错误:', error);
     throw error;
@@ -73,9 +79,7 @@ export const updateItinerary = async (itineraryId, updates) => {
   try {
     const response = await fetch(`${API_BASE_URL}/itineraries/${itineraryId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: getHeadersWithApiKey(),
       body: JSON.stringify(updates)
     });
 
@@ -96,7 +100,8 @@ export const updateItinerary = async (itineraryId, updates) => {
 export const deleteItinerary = async (itineraryId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/itineraries/${itineraryId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: getHeadersWithApiKey()
     });
 
     if (!response.ok) {

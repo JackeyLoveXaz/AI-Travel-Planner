@@ -9,9 +9,36 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localho
 // API请求超时时间（毫秒）
 export const API_TIMEOUT = 30000;
 
+// 从localStorage获取API Key
+export const getApiKey = () => {
+  try {
+    return localStorage.getItem('aiTravelPlannerApiKey') || '';
+  } catch (error) {
+    console.error('获取API Key失败:', error);
+    return '';
+  }
+};
+
 // 请求头配置
 export const DEFAULT_HEADERS = {
   'Content-Type': 'application/json'
+};
+
+// 获取包含API Key的请求头
+export const getHeadersWithApiKey = () => {
+  const headers = { ...DEFAULT_HEADERS };
+  const apiKey = getApiKey();
+  
+  if (apiKey) {
+    headers['Authorization'] = `Bearer ${apiKey}`;
+  }
+  
+  return headers;
+};
+
+// 检查是否已配置API Key
+export const hasConfiguredApiKey = () => {
+  return !!getApiKey();
 };
 
 // 错误处理函数
@@ -35,5 +62,7 @@ export default {
   API_BASE_URL,
   API_TIMEOUT,
   DEFAULT_HEADERS,
+  getHeadersWithApiKey,
+  hasConfiguredApiKey,
   handleApiError
 };
