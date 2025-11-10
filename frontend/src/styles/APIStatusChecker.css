@@ -1,0 +1,161 @@
+.api-status-container {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+}
+
+.api-status-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.status-indicator {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.status-indicator.checking {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-indicator.connected {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-indicator.disconnected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-text {
+  font-weight: 500;
+  flex: 1;
+}
+
+.test-button {
+  background-color: #4c51bf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.test-button:hover:not(:disabled) {
+  background-color: #434190;
+}
+
+.test-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.test-results {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.test-results h4 {
+  margin: 0 0 10px 0;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.result-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.result-section strong {
+  color: #4a5568;
+  min-width: 80px;
+}
+
+.success {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.error {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.solutions-section {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+}
+
+.solutions-section h5 {
+  margin: 0 0 8px 0;
+  color: #856404;
+  font-size: 0.9rem;
+}
+
+.solutions-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.solutions-section li {
+  margin-bottom: 4px;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .api-status-header {
+    flex-wrap: wrap;
+  }
+  
+  .test-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .result-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .result-section strong {
+    min-width: auto;
+  }
+}

@@ -1,0 +1,231 @@
+.dashboard-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-page h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+}
+
+.dashboard-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #aaa;
+  font-weight: 500;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #646cff;
+}
+
+.recent-itineraries,
+.quick-actions {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recent-itineraries h2,
+.quick-actions h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #646cff;
+  padding-bottom: 0.5rem;
+}
+
+.itinerary-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.itinerary-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.itinerary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  border-color: #646cff;
+}
+
+.itinerary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.itinerary-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-completed {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.status-planned {
+  background: rgba(14, 165, 233, 0.2);
+  color: #0ea5e9;
+}
+
+.itinerary-date {
+  color: #aaa;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.itinerary-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-view {
+  background: #646cff;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-view:hover {
+  background: #535bf2;
+  transform: translateY(-2px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  color: #aaa;
+  margin-bottom: 2rem;
+}
+
+.btn-create {
+  background: linear-gradient(45deg, #646cff, #535bf2);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(100, 108, 255, 0.4);
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.action-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  padding: 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.action-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: #646cff;
+}
+
+.action-button.primary {
+  background: linear-gradient(45deg, #646cff, #535bf2);
+  color: white;
+  border-color: #646cff;
+}
+
+.action-icon {
+  font-size: 2.5rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 1rem;
+  }
+  
+  .dashboard-page h1 {
+    font-size: 2rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .itinerary-list,
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .recent-itineraries,
+  .quick-actions {
+    padding: 1.5rem;
+  }
+}
