@@ -96,6 +96,28 @@ function HomePage() {
     }
   };
 
+  // 增强的中文数字解析函数
+  const parseChineseBudget = (text) => {
+    // 匹配多种预算表达格式
+    // 格式1: 预算1万元/两万块/3千元等
+    let budgetPattern1 = /(?:预算)?[:：]?\s*(\d+)[万千]块?/;
+    let match = text.match(budgetPattern1);
+    if (match) {
+      const num = parseInt(match[1]);
+      const isWan = match[0].includes('万');
+      return isWan ? num * 10000 : num * 1000;
+    }
+    
+    // 格式2: 预算10000元/20000元等
+    let budgetPattern2 = /(?:预算)?[:：]?\s*(\d+(?:\.\d+)?)元?/;
+    match = text.match(budgetPattern2);
+    if (match) {
+      return parseInt(match[1]);
+    }
+    
+    return null;
+  };
+  
   // 解析语音输入中的关键信息
   const parseVoiceInput = (input) => {
     // 简单的关键词解析
@@ -118,11 +140,10 @@ function HomePage() {
       setEndDate(end.toISOString().split('T')[0]);
     }
     
-    // 提取预算
-    const budgetPattern = /预算[:：]?\s*(\d+(\.\d+)?)[万千]?元?/;
-    const budgetMatch = text.match(budgetPattern);
-    if (budgetMatch) {
-      setBudget(budgetMatch[1]);
+    // 提取预算 - 使用增强的解析函数
+    const parsedBudget = parseChineseBudget(text);
+    if (parsedBudget !== null) {
+      setBudget(parsedBudget.toString());
     }
     
     // 提取人数
@@ -191,12 +212,56 @@ function HomePage() {
         // 如果提供了预算，创建预算记录
         if (parsedData.budget) {
           try {
-            await createBudget(
-              itinerary._id, 
-              parsedData.destination, 
-              parseInt(parsedData.budget)
-            );
-            console.log('预算创建成功');
+            // 确保预算是有效的数字
+            const budgetAmount = typeof parsedData.budget === 'number' ? parsedData.budget : parseInt(parsedData.budget);
+            if (!isNaN(budgetAmount) && budgetAmount > 0) {
+              // 提取预算分类信息
+              const budgetCategories = [];
+              if (parsedData.budgetBreakdown && typeof parsedData.budgetBreakdown === 'object') {
+                Object.entries(parsedData.budgetBreakdown).forEach(([key, value]) => {
+                  if (value && value.amount) {
+                    budgetCategories.push({
+                      name: key === 'transportation' ? '交通' :
+                           key === 'accommodation' ? '住宿' :
+                           key === 'food' ? '餐饮' :
+                           key === 'activities' ? '活动' :
+                           key === 'shopping' ? '购物' : '其他',
+                      budget: value.amount, // 注意这里使用budget字段而不是amount
+                      actual: 0, // 添加actual字段
+                      description: value.details || '',
+                      percentage: value.percentage || 0
+                    });
+                  }
+                });
+              }
+              
+              // 如果没有从AI获取到分类信息，创建默认分类
+              if (budgetCategories.length === 0) {
+                const defaultCategories = [
+                  { name: '交通', budget: Math.round(budgetAmount * 0.3), actual: 0, description: '往返交通和当地交通' },
+                  { name: '住宿', budget: Math.round(budgetAmount * 0.3), actual: 0, description: '酒店住宿费用' },
+                  { name: '餐饮', budget: Math.round(budgetAmount * 0.2), actual: 0, description: '每日餐饮开销' },
+                  { name: '活动', budget: Math.round(budgetAmount * 0.1), actual: 0, description: '景点门票和体验' },
+                  { name: '购物', budget: Math.round(budgetAmount * 0.05), actual: 0, description: '纪念品和购物' },
+                  { name: '其他', budget: Math.round(budgetAmount * 0.05), actual: 0, description: '杂项支出' }
+                ];
+                budgetCategories.push(...defaultCategories);
+              }
+              
+              await createBudget(
+                itinerary._id, 
+                parsedData.destination, 
+                budgetAmount,
+                budgetCategories
+              );
+              
+              // 关键修复：将预算值存储在会话中，以便BudgetPage能够获取到正确的值
+              sessionStorage.setItem(`budget_${itinerary._id}`, budgetAmount.toString());
+              console.log('预算创建成功，包含分类明细:', budgetCategories,
+                          '预算值已保存到会话存储中');
+            } else {
+              console.warn('无效的预算值:', parsedData.budget);
+            }
           } catch (budgetError) {
             console.warn('预算创建失败，但行程已成功创建:', budgetError);
           }
@@ -254,12 +319,29 @@ function HomePage() {
       // 如果提供了预算，创建预算记录
       if (budget) {
         try {
-          await createBudget(
-            itinerary._id, 
-            destination, 
-            parseInt(budget)
-          );
-          console.log('预算创建成功');
+          // 确保预算是有效的数字
+          const budgetAmount = typeof budget === 'number' ? budget : parseInt(budget);
+          if (!isNaN(budgetAmount) && budgetAmount > 0) {
+            // 创建默认预算分类
+            const budgetCategories = [
+              { name: '交通', budget: Math.round(budgetAmount * 0.3), actual: 0, description: '往返交通和当地交通' },
+              { name: '住宿', budget: Math.round(budgetAmount * 0.3), actual: 0, description: '酒店住宿费用' },
+              { name: '餐饮', budget: Math.round(budgetAmount * 0.2), actual: 0, description: '每日餐饮开销' },
+              { name: '活动', budget: Math.round(budgetAmount * 0.1), actual: 0, description: '景点门票和体验' },
+              { name: '购物', budget: Math.round(budgetAmount * 0.05), actual: 0, description: '纪念品和购物' },
+              { name: '其他', budget: Math.round(budgetAmount * 0.05), actual: 0, description: '杂项支出' }
+            ];
+            
+            await createBudget(
+              itinerary._id, 
+              destination, 
+              budgetAmount,
+              budgetCategories
+            );
+            console.log('预算创建成功，包含分类明细:', budgetCategories);
+          } else {
+            console.warn('无效的预算值:', budget);
+          }
         } catch (budgetError) {
           console.warn('预算创建失败，但行程已成功创建:', budgetError);
         }

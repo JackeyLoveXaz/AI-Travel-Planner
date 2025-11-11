@@ -31,7 +31,7 @@ const env = process.env.NODE_ENV || 'development';
 const apiConfig = {
   port: process.env.PORT || 5000,
   baseUrl: process.env.API_BASE_URL || 'http://localhost:5000/api',
-  corsOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:5173,http://localhost:5174').split(',').map(origin => origin.trim())
+  corsOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:5173,http://localhost:5174,http://localhost:5175').split(',').map(origin => origin.trim())
 };
 
 // 数据库配置

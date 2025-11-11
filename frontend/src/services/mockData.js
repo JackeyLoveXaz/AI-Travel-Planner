@@ -175,6 +175,82 @@ export const generateMockItinerary = (userQuery) => {
     });
   }
   
+  // 生成预算分类明细
+  const generateBudgetBreakdown = (totalBudget) => {
+    // 根据不同预算级别调整分配比例
+    const isHighBudget = totalBudget > 10000;
+    const isMediumBudget = totalBudget > 5000 && totalBudget <= 10000;
+    
+    // 基础分配比例
+    let percentages = {
+      transportation: 30,
+      accommodation: 30,
+      food: 20,
+      activities: 10,
+      shopping: 5,
+      others: 5
+    };
+    
+    // 根据预算级别调整
+    if (isHighBudget) {
+      percentages = {
+        transportation: 25,
+        accommodation: 35,
+        food: 20,
+        activities: 10,
+        shopping: 5,
+        others: 5
+      };
+    } else if (isMediumBudget) {
+      percentages = {
+        transportation: 30,
+        accommodation: 30,
+        food: 20,
+        activities: 10,
+        shopping: 5,
+        others: 5
+      };
+    }
+    
+    // 计算各分类金额
+    const budgetBreakdown = {
+      transportation: {
+        amount: Math.round(totalBudget * percentages.transportation / 100),
+        percentage: percentages.transportation,
+        details: '包括往返交通和当地交通费用'
+      },
+      accommodation: {
+        amount: Math.round(totalBudget * percentages.accommodation / 100),
+        percentage: percentages.accommodation,
+        details: `包括${info.days}晚住宿费用`
+      },
+      food: {
+        amount: Math.round(totalBudget * percentages.food / 100),
+        percentage: percentages.food,
+        details: `包括${info.days}天餐饮费用`
+      },
+      activities: {
+        amount: Math.round(totalBudget * percentages.activities / 100),
+        percentage: percentages.activities,
+        details: '包括景点门票和体验活动费用'
+      },
+      shopping: {
+        amount: Math.round(totalBudget * percentages.shopping / 100),
+        percentage: percentages.shopping,
+        details: '包括纪念品和购物费用'
+      },
+      others: {
+        amount: Math.round(totalBudget * percentages.others / 100),
+        percentage: percentages.others,
+        details: '包括保险、小费等其他费用'
+      }
+    };
+    
+    return budgetBreakdown;
+  };
+  
+  const budgetBreakdown = generateBudgetBreakdown(info.budget);
+  
   return {
     success: true,
     data: {
@@ -184,6 +260,7 @@ export const generateMockItinerary = (userQuery) => {
       travelers: info.travelers,
       budget: info.budget,
       preferences: info.preferences,
+      budgetBreakdown,
       itinerary: {
         overview: `在${info.days}天内游览${info.destination}，主要体验${info.preferences.join('、')}等活动`,
         dailyPlans,

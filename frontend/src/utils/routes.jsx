@@ -30,11 +30,11 @@ const router = createBrowserRouter([
         element: <ItineraryPage />
       },
       {
-        path: 'budget/:itineraryId?',
+        path: 'budget/:itineraryId',
         element: <BudgetPage />
       },
       {
-        path: 'budgets/:itineraryId?',
+        path: 'budgets/:itineraryId',
         element: <BudgetPage />
       },
       {

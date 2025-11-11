@@ -21,67 +21,22 @@ const ItineraryPage = () => {
     setError('');
     try {
       const data = await getAllItineraries();
-      setItineraries(data);
+      if (data && data.length > 0) {
+        setItineraries(data);
+      } else {
+        console.log('No itineraries found, please create a new one');
+        setItineraries([]);
+      }
     } catch (err) {
       setError(handleApiError(err));
-      // 显示错误信息，但保留模拟数据以便用户体验
-      console.error('加载行程失败，显示模拟数据:', err);
-      // 加载模拟数据作为后备
-      loadMockData();
+      console.error('Failed to load itineraries:', err);
+      setItineraries([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // 加载模拟数据作为后备
-  const loadMockData = () => {
-    const mockItineraries = [
-      {
-        _id: 'mock-1',
-        destination: '上海',
-        startDate: '2024-01-20',
-        endDate: '2024-01-25',
-        days: [
-          {
-            day: 1,
-            activities: [
-              { time: '09:00', activity: '抵达上海浦东国际机场', notes: '提前2小时到达机场办理登机手续' },
-              { time: '12:00', activity: '入住酒店', notes: '上海外滩华尔道夫酒店' },
-              { time: '14:00', activity: '游览外滩', notes: '欣赏黄浦江两岸风光' },
-              { time: '18:00', activity: '晚餐：上海老饭店', notes: '品尝正宗上海本帮菜' }
-            ]
-          },
-          {
-            day: 2,
-            activities: [
-              { time: '10:00', activity: '上海博物馆', notes: '提前预约，周一闭馆' },
-              { time: '12:30', activity: '午餐：南京东路小吃', notes: '生煎包、小笼包' },
-              { time: '14:30', activity: '豫园', notes: '江南古典园林' },
-              { time: '19:00', activity: '登东方明珠塔', notes: '俯瞰上海夜景' }
-            ]
-          }
-        ]
-      },
-      {
-        _id: 'mock-2',
-        destination: '北京',
-        startDate: '2024-02-10',
-        endDate: '2024-02-15',
-        days: [
-          {
-            day: 1,
-            activities: [
-              { time: '10:00', activity: '抵达北京首都国际机场', notes: '机场快轨直达市区' },
-              { time: '12:30', activity: '入住酒店', notes: '王府井希尔顿酒店' },
-              { time: '14:00', activity: '王府井步行街', notes: '购物和小吃' },
-              { time: '18:00', activity: '晚餐：全聚德烤鸭店', notes: '推荐前门店' }
-            ]
-          }
-        ]
-      }
-    ];
-    setItineraries(mockItineraries);
-  };
+  // 不再使用模拟数据作为后备方案
 
   const handleViewDetail = (itinerary) => {
     setSelectedItinerary(itinerary);
@@ -202,12 +157,20 @@ const ItineraryPage = () => {
               <span>{formatDate(selectedItinerary.endDate)}</span>
               <span className="duration">  {calculateDuration(selectedItinerary.startDate, selectedItinerary.endDate)}天</span>
             </div>
-            <button 
-              className="btn-danger" 
-              onClick={() => handleDelete(selectedItinerary._id)}
-            >
-              删除行程
-            </button>
+            <div className="detail-actions">
+              <Link 
+                to={`/budgets/${selectedItinerary._id}`} 
+                className="btn-secondary"
+              >
+                查看预算
+              </Link>
+              <button 
+                className="btn-danger" 
+                onClick={() => handleDelete(selectedItinerary._id)}
+              >
+                删除行程
+              </button>
+            </div>
           </div>
           
           <div className="itinerary-days">

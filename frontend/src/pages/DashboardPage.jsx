@@ -80,7 +80,7 @@ function DashboardPage() {
             <span className="action-icon">+</span>
             <span>创建新行程</span>
           </Link>
-          <Link to="/budget" className="action-button">
+          <Link to="/itineraries" className="action-button">
             <span className="action-icon">💰</span>
             <span>预算管理</span>
           </Link>

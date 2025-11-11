@@ -251,6 +251,29 @@
   background-color: #4a5568;
 }
 
+.detail-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.detail-actions .btn-secondary {
+  background-color: #4c51bf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-actions .btn-secondary:hover {
+  background-color: #434190;
+}
+
 .detail-content {
   margin-bottom: 30px;
 }

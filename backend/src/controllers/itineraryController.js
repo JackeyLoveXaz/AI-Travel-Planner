@@ -5,7 +5,7 @@ const { isDbConnected } = require('../config/db');
 // 创建行程
 exports.createItinerary = async (req, res) => {
   try {
-    const { destination, startDate, endDate, preferences } = req.body;
+    const { destination, startDate, endDate, preferences, travelers, budget } = req.body;
 
     // 验证请求数据
     if (!destination || !startDate || !endDate) {
@@ -20,8 +20,15 @@ exports.createItinerary = async (req, res) => {
     // 从请求头中提取API key
     const apiKey = req.headers.authorization?.replace('Bearer ', '');
 
-    // 使用AI生成行程内容，传递API key
-    const aiGeneratedDays = await generateItinerary(destination, startDate, endDate, preferences, apiKey);
+    // 构建完整的偏好对象，包含travelers和budget
+    const completePreferences = {
+      ...preferences,
+      travelers: travelers || 2,
+      budget: budget || 5000
+    };
+
+    // 使用AI生成行程内容，传递完整的偏好信息和API key
+    const aiGeneratedDays = await generateItinerary(destination, startDate, endDate, completePreferences, apiKey);
 
     // 尝试保存到数据库
     try {
@@ -31,7 +38,9 @@ exports.createItinerary = async (req, res) => {
         startDate,
         endDate,
         days: aiGeneratedDays,
-        preferences
+        preferences: completePreferences,
+        travelers,
+        budget
       });
 
       await itinerary.save();
@@ -50,7 +59,9 @@ exports.createItinerary = async (req, res) => {
           startDate,
           endDate,
           days: aiGeneratedDays,
-          preferences,
+          preferences: completePreferences,
+          travelers,
+          budget,
           // 添加一个临时ID
           _id: `temp-${Date.now()}`,
           createdAt: new Date(),

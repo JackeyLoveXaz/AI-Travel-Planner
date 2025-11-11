@@ -76,6 +76,25 @@ exports.createBudget = async (req, res) => {
 // 获取预算
 exports.getBudget = async (req, res) => {
   try {
+    // 验证参数是否存在
+    // 检查id是否存在且不是'undefined'字符串
+    if (!req.params.id || req.params.id === 'undefined' || req.params.id.trim() === '') {
+      return res.status(400).json({
+        message: '请提供有效的行程ID',
+        data: {
+          itineraryId: null,
+          destination: '未知目的地',
+          totalBudget: 0,
+          spent: 0,
+          remaining: 0,
+          categories: [],
+          _id: `temp-${Date.now()}`,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      });
+    }
+
     const budget = await Budget.findOne({ itineraryId: req.params.id });
 
     if (!budget) {
@@ -103,7 +122,7 @@ exports.getBudget = async (req, res) => {
     res.status(200).json({
       message: '数据库连接问题，返回默认预算结构',
       data: {
-        itineraryId: req.params.id,
+        itineraryId: req.params.id || null,
         destination: '未知目的地',
         totalBudget: 0,
         spent: 0,
