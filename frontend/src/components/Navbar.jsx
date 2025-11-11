@@ -9,7 +9,6 @@ function Navbar() {
       </div>
       <div className="navbar-menu">
         <Link to="/" className="nav-item">首页</Link>
-        <Link to="/dashboard" className="nav-item">仪表盘</Link>
         <Link to="/itinerary" className="nav-item">行程规划</Link>
         <Link to="/budget" className="nav-item">预算管理</Link>
         <Link to="/settings" className="nav-item">设置</Link>
