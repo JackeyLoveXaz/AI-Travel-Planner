@@ -6,6 +6,7 @@ import ItineraryPage from '../pages/ItineraryPage';
 import BudgetPage from '../pages/BudgetPage';
 import SettingsPage from '../pages/SettingsPage';
 import ConnectionTestPage from '../pages/ConnectionTestPage';
+import MapPage from '../pages/MapPage';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: 'connection-test',
         element: <ConnectionTestPage />
+      },
+      {
+        path: 'map',
+        element: <MapPage />
       }
     ]
   }

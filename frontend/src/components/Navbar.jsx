@@ -11,6 +11,7 @@ function Navbar() {
         <Link to="/" className="nav-item">首页</Link>
         <Link to="/itinerary" className="nav-item">行程规划</Link>
         <Link to="/budget" className="nav-item">预算管理</Link>
+        <Link to="/map" className="nav-item">地图</Link>
         <Link to="/settings" className="nav-item">设置</Link>
         <Link to="/connection-test" className="nav-item">连接测试</Link>
       </div>
